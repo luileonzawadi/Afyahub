@@ -1,0 +1,97 @@
+.forum-moderation {
+  padding: 32px 0;
+}
+
+.page-header {
+  margin-bottom: 32px;
+}
+
+.page-header h1 {
+  font-size: 32px;
+  margin-bottom: 8px;
+}
+
+.page-header p {
+  color: var(--body-text);
+}
+
+.topics-table {
+  overflow-x: auto;
+}
+
+.topics-table table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.topics-table th {
+  text-align: left;
+  padding: 16px;
+  border-bottom: 2px solid var(--border);
+  font-weight: 600;
+  color: var(--header-text);
+  font-size: 14px;
+}
+
+.topics-table td {
+  padding: 16px;
+  border-bottom: 1px solid var(--border);
+  font-size: 14px;
+}
+
+.category-badge {
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  background: var(--light-bg);
+  color: var(--primary);
+}
+
+.action-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.view-btn,
+.delete-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.view-btn {
+  background: #dbeafe;
+  color: #1e40af;
+}
+
+.view-btn:hover {
+  background: #bfdbfe;
+}
+
+.delete-btn {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+.delete-btn:hover {
+  background: #fecaca;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 64px 24px;
+  color: var(--body-text);
+}
+
+.empty-state svg {
+  color: var(--border);
+  margin-bottom: 16px;
+}

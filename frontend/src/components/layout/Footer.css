@@ -1,0 +1,16 @@
+.footer {
+  background: var(--card-bg);
+  border-top: 1px solid var(--border);
+  padding: 24px 0;
+  margin-top: 80px;
+}
+
+.footer .container {
+  text-align: center;
+}
+
+.footer p {
+  color: var(--body-text);
+  font-size: 14px;
+  margin: 0;
+}
