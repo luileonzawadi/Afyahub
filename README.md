@@ -7,40 +7,55 @@
 ![Frontend](https://img.shields.io/badge/Frontend-React-61dafb)
 ![Database](https://img.shields.io/badge/Database-SQLite-003B57)
 
----
-
 ## 🎯 Overview
 
-AfyaHub is a comprehensive Learning Management System designed to deliver structured HIV/AIDS education, support community engagement, and provide access to vital resources. The platform features a modern React frontend and a high-performance FastAPI backend.
-
----
+AfyaHub is a comprehensive Learning Management System designed to deliver structured HIV/AIDS education, support community engagement, and provide access to vital resources in Kenya. The platform features a modern React frontend and a high-performance FastAPI backend.
 
 ## ✨ Key Features
 
 ### 🎓 Learning Platform
 - **Course Catalog** - Browse comprehensive HIV/AIDS courses
-- **Video Lessons** - Interactive video content
-- **Progress Tracking** - Monitor learning journey
-- **Module Completion** - Track completed lessons
-- **Certificates** - Earn certificates upon completion
+- **Video Lessons** - Interactive video content with YouTube integration
+- **Progress Tracking** - Monitor learning journey with completion percentages
+- **Module Completion** - Track completed lessons with notifications
+- **Certificates** - Earn certificates upon course completion
 
 ### 👤 User Features
-- **Authentication** - Secure JWT-based login
-- **User Profiles** - Personalized user accounts
+- **Authentication** - Secure JWT-based login system
+- **User Profiles** - Personalized user accounts with settings
 - **Learning Streaks** - Track consecutive days of learning
-- **Theme Customization** - 5 warm color themes
-- **Dashboard** - Personalized learning overview
+- **Theme Customization** - 5 warm color themes (Sky Blue, Ocean Blue, Sunset Orange, Warm Red, Golden Amber, Rose Pink)
+- **Dashboard** - Personalized learning overview with statistics
+- **Notifications** - User-specific notification system
+- **Bookmarks** - Save favorite courses for quick access
 
-### 👨‍💼 Admin Features
-- **Course Management** - Create, edit, delete courses
-- **Module Editor** - Add video URLs and HTML content
-- **User Management** - Manage user accounts
-- **Analytics Dashboard** - View platform statistics
-- **Content Moderation** - Moderate forum discussions
+### 💬 Community Features
+- **Forum Discussions** - Create and participate in community discussions
+- **Category Filtering** - Support & Care, Education, Community categories
+- **Like & Reply System** - Interactive engagement with chat-style replies
+- **Real-time Updates** - Live notification system for new posts
+- **User-specific Content** - Delete own discussions and replies
 
----
+### 🏥 Resource Directory
+- **Testing Centers** - Find HIV testing locations across Kenya
+- **Support Services** - Access to counseling and support organizations
+- **Contact Information** - Phone numbers, addresses, and websites
+- **Service Details** - Hours of operation and available services
+- **Location-based** - Resources in Nairobi, Mombasa, Kisumu, Nakuru, Eldoret
+
+### 👨💼 Admin Features
+- **Course Management** - Create, edit, delete courses and modules
+- **User Management** - View and manage user accounts
+- **Forum Moderation** - Monitor and moderate community discussions
+- **Analytics Dashboard** - Comprehensive platform statistics
+- **Content Management** - Full CRUD operations for educational content
 
 ## 🚀 Quick Start
+
+### Prerequisites
+- Python 3.8+
+- Node.js 16+
+- npm or yarn
 
 ### Option 1: Automated Start (Windows)
 ```bash
@@ -49,25 +64,30 @@ START.bat
 
 ### Option 2: Manual Start
 
-**Terminal 1 - Backend:**
+**Backend Setup:**
 ```bash
 cd backend
-venv\Scripts\activate
+python -m venv venv
+venv\Scripts\activate  # Windows
+# or
+source venv/bin/activate  # Linux/Mac
+
+pip install -r requirements.txt
+python seed_data.py
 uvicorn app.main:app --reload --port 8000
 ```
 
-**Terminal 2 - Frontend:**
+**Frontend Setup:**
 ```bash
 cd frontend
+npm install
 npm run dev
 ```
 
 ### Access the Application
 - **Frontend:** http://localhost:3000
 - **Backend API:** http://localhost:8000
-- **API Docs:** http://localhost:8000/docs
-
----
+- **API Documentation:** http://localhost:8000/docs
 
 ## 🔐 Default Credentials
 
@@ -79,27 +99,23 @@ npm run dev
 - **Email:** demo@afyahub.com
 - **Password:** demo123
 
----
-
 ## 🛠️ Tech Stack
 
 ### Backend
 - **FastAPI** - Modern Python web framework
 - **SQLAlchemy** - SQL toolkit and ORM
 - **SQLite** - Lightweight database
-- **JWT** - Secure authentication
+- **JWT** - Secure authentication with bcrypt
 - **Pydantic** - Data validation
 - **Uvicorn** - ASGI server
 
 ### Frontend
-- **React 18** - UI framework
-- **Vite** - Build tool
+- **React 18** - UI framework with hooks
+- **Vite** - Fast build tool
 - **React Router** - Client-side routing
 - **TanStack Query** - Server state management
-- **Axios** - HTTP client
-- **React Icons** - Icon library
-
----
+- **Axios** - HTTP client with interceptors
+- **React Icons** - Comprehensive icon library
 
 ## 📁 Project Structure
 
@@ -108,9 +124,13 @@ AfyaHub/
 ├── backend/                    # FastAPI backend
 │   ├── app/
 │   │   ├── api/               # API endpoints
-│   │   │   ├── auth.py        # Authentication
+│   │   │   ├── auth.py        # JWT Authentication
 │   │   │   ├── courses.py     # Course management
-│   │   │   └── users.py       # User management
+│   │   │   ├── users.py       # User management
+│   │   │   ├── forum.py       # Forum discussions
+│   │   │   ├── admin.py       # Admin operations
+│   │   │   ├── resources.py   # Resource directory
+│   │   │   └── dependencies.py # Shared dependencies
 │   │   ├── core/              # Core functionality
 │   │   │   ├── config.py      # Configuration
 │   │   │   └── security.py    # Security utilities
@@ -118,50 +138,44 @@ AfyaHub/
 │   │   │   └── database.py    # DB connection
 │   │   ├── models/            # SQLAlchemy models
 │   │   │   ├── user.py        # User model
-│   │   │   └── course.py      # Course models
+│   │   │   ├── course.py      # Course models
+│   │   │   ├── forum.py       # Forum models
+│   │   │   └── resource.py    # Resource model
 │   │   ├── schemas/           # Pydantic schemas
-│   │   │   ├── user.py        # User schemas
-│   │   │   └── course.py      # Course schemas
 │   │   └── main.py            # FastAPI app
-│   ├── requirements.txt       # Dependencies
+│   ├── requirements.txt       # Python dependencies
 │   ├── seed_data.py          # Database seeding
 │   └── .env                   # Environment variables
 │
 ├── frontend/                  # React frontend
 │   ├── src/
 │   │   ├── components/       # Reusable components
-│   │   │   ├── common/       # Button, Card, Input
-│   │   │   ├── layout/       # Header, Footer
-│   │   │   └── course/       # Course components
+│   │   │   ├── common/       # Button, Card, Input, Modal
+│   │   │   ├── layout/       # Header, Footer, Layout
+│   │   │   └── course/       # Course-specific components
 │   │   ├── pages/            # Page components
-│   │   │   ├── public/       # Home, Login, Register
-│   │   │   ├── learner/      # Dashboard, Courses
-│   │   │   └── admin/        # Admin Dashboard
+│   │   │   ├── public/       # Home, Login, Register, Resources
+│   │   │   ├── learner/      # Dashboard, Courses, Forum, Profile
+│   │   │   └── admin/        # Admin Dashboard, Management
 │   │   ├── context/          # React Context
-│   │   │   └── AuthContext.jsx
+│   │   │   ├── AuthContext.jsx
+│   │   │   └── ThemeContext.jsx
 │   │   ├── hooks/            # Custom hooks
 │   │   │   └── useQuery.js
 │   │   ├── services/         # API services
-│   │   │   └── api.js
+│   │   │   ├── api.js
+│   │   │   └── mockData.js
+│   │   ├── utils/            # Utilities
+│   │   │   ├── storage.js
+│   │   │   └── theme.js
 │   │   └── styles/           # Global styles
 │   ├── package.json          # Dependencies
 │   └── vite.config.js        # Vite configuration
 │
-├── SETUP_GUIDE.md            # Detailed setup guide
-├── START.bat                 # Quick start script
-└── README.md                 # This file
+├── .gitignore                # Git ignore rules
+├── README.md                 # This file
+└── START.bat                 # Quick start script
 ```
-
----
-
-## 📚 Documentation
-
-- **[SETUP_GUIDE.md](SETUP_GUIDE.md)** - Complete setup instructions
-- **[API Documentation](http://localhost:8000/docs)** - Interactive API docs (when server is running)
-- **[Frontend README](frontend/README.md)** - Frontend-specific documentation
-- **[Backend README](backend/README.md)** - Backend-specific documentation
-
----
 
 ## 🔌 API Endpoints
 
@@ -177,141 +191,99 @@ AfyaHub/
 - `GET /api/courses/{id}/modules` - Get course modules
 - `POST /api/courses/modules/{id}/progress` - Update progress
 
-### Users
-- `GET /api/users/profile` - Get user profile
-- `GET /api/users/progress` - Get user progress
+### Forum
+- `GET /api/forum/topics` - Get all forum topics
+- `GET /api/forum/topics/{id}` - Get specific topic
+- `POST /api/forum/topics` - Create new topic
+- `DELETE /api/forum/topics/{id}` - Delete topic (author/admin only)
+
+### Resources
+- `GET /api/resources` - Get all resources
+- `GET /api/resources?type={type}` - Filter by resource type
+- `GET /api/resources/{id}` - Get specific resource
 
 ### Admin (Admin only)
-- `POST /api/courses` - Create course
-- `POST /api/courses/{id}/modules` - Create module
-
----
+- `GET /api/admin/stats` - Platform statistics
+- `GET /api/admin/users` - Get all users
+- `DELETE /api/admin/users/{id}` - Delete user
+- `POST /api/admin/courses` - Create course
+- `PUT /api/admin/courses/{id}` - Update course
+- `DELETE /api/admin/courses/{id}` - Delete course
 
 ## 🎨 Features Showcase
 
 ### For Learners
-✅ Browse and enroll in courses  
-✅ Watch video lessons  
-✅ Track learning progress  
-✅ Complete modules  
-✅ Customize color themes (5 warm colors)  
-✅ Track learning streaks  
-✅ View certificates  
-✅ Community forum access  
+✅ Browse and enroll in HIV/AIDS courses  
+✅ Watch educational video lessons  
+✅ Track learning progress with percentages  
+✅ Complete modules and earn certificates  
+✅ Customize interface with 5 color themes  
+✅ Track learning streaks and achievements  
+✅ Participate in community discussions  
+✅ Access Kenya-based resource directory  
+✅ Receive personalized notifications  
+✅ Bookmark favorite courses  
 
 ### For Administrators
-✅ Admin dashboard with analytics  
-✅ Create and manage courses  
-✅ Add/edit/delete modules  
-✅ User management  
-✅ Content moderation  
-✅ View platform statistics  
+✅ Comprehensive admin dashboard with analytics  
+✅ Create and manage courses with modules  
+✅ User management with deletion capabilities  
+✅ Forum moderation and content management  
+✅ View detailed platform statistics  
+✅ Monitor user engagement and progress  
 
----
+## 🔒 Security Features
 
-## 🔒 Security
-
-- JWT token-based authentication
+- JWT token-based authentication with refresh
 - Bcrypt password hashing
 - Role-based access control (Admin/Learner)
-- CORS configuration
-- Input validation with Pydantic
+- CORS configuration for secure cross-origin requests
+- Input validation with Pydantic schemas
 - SQL injection protection with SQLAlchemy ORM
+- User-specific data isolation
+- Secure session management
 
----
+## 🌍 Kenya-Focused Resources
 
-## 🐛 Troubleshooting
+The platform includes authentic Kenyan HIV/AIDS resources:
+- **Kenyatta National Hospital VCT** - Nairobi
+- **Kenya AIDS NGOs Consortium (KANCO)** - Nairobi
+- **Mombasa Counseling Center** - Mombasa
+- **Kisumu District Hospital VCT** - Kisumu
+- **Family Health Options Kenya** - Nakuru
+- **AMPATH Center** - Eldoret
 
-### Backend won't start
-```bash
-cd backend
-pip install -r requirements.txt --force-reinstall
-python seed_data.py
-```
+## 🚀 Deployment
 
-### Frontend won't start
-```bash
-cd frontend
-npm install
-npm run dev
-```
+### Backend Deployment
+1. Set production environment variables
+2. Use PostgreSQL for production database
+3. Configure Gunicorn for WSGI server
+4. Set up SSL/HTTPS
+5. Configure proper CORS origins
 
-### Can't login
-- Ensure backend is running on port 8000
-- Run `python seed_data.py` to create default users
-- Clear browser cache and localStorage
-
-### Blank page after login
-- Hard refresh: `Ctrl + Shift + R`
-- Check browser console (F12) for errors
-- Verify both servers are running
-
----
-
-## 📊 Database
-
-The system uses SQLite by default. To reset the database:
-
-```bash
-cd backend
-del afyahub.db  # Windows
-rm afyahub.db   # Linux/Mac
-python seed_data.py
-```
-
----
-
-## 🚀 Production Deployment
-
-### Backend
-1. Change `SECRET_KEY` in `.env`
-2. Use PostgreSQL instead of SQLite
-3. Use production ASGI server (Gunicorn)
-4. Enable HTTPS
-5. Set up proper CORS origins
-
-### Frontend
-1. Build: `npm run build`
-2. Deploy `dist/` folder
+### Frontend Deployment
+1. Build production bundle: `npm run build`
+2. Deploy `dist/` folder to web server
 3. Configure environment variables
-4. Set up SPA routing
-
----
-
-## 📈 Future Enhancements
-
-- [ ] Real-time chat support
-- [ ] Mobile app (React Native)
-- [ ] Advanced analytics
-- [ ] Email notifications
-- [ ] Social media integration
-- [ ] Multi-language support
-- [ ] Offline mode
-- [ ] Video conferencing
-
----
+4. Set up SPA routing for client-side navigation
 
 ## 🤝 Contributing
 
-Contributions are welcome! Please follow these steps:
-
 1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Test thoroughly
-5. Submit a pull request
-
----
+2. Create a feature branch: `git checkout -b feature-name`
+3. Make your changes and test thoroughly
+4. Commit your changes: `git commit -m 'Add feature'`
+5. Push to the branch: `git push origin feature-name`
+6. Submit a pull request
 
 ## 📄 License
 
 Copyright © 2024 AfyaHub. All rights reserved.
 
----
-
 ## 🙏 Acknowledgments
 
-Built with ❤️ for HIV/AIDS education and community support.
+Built with ❤️ for HIV/AIDS education and community support in Kenya.
 
 **AfyaHub - Empowering communities through education.**
 
@@ -319,24 +291,18 @@ Built with ❤️ for HIV/AIDS education and community support.
 
 ## 📞 Support
 
-For issues or questions:
-1. Check [SETUP_GUIDE.md](SETUP_GUIDE.md)
-2. Review API documentation at `/docs`
+For technical support:
+1. Check the API documentation at `/docs`
+2. Review the troubleshooting section
 3. Check browser console for errors
-4. Verify both servers are running
+4. Ensure both backend and frontend servers are running
 
----
-
-## 🎉 Get Started Now!
+## 🎉 Get Started
 
 ```bash
-# Clone or download the project
-cd AfyaHub
-
-# Run the quick start script
-START.bat
-
-# Or follow the manual setup in SETUP_GUIDE.md
+git clone https://github.com/yourusername/afyahub.git
+cd afyahub
+# Follow the Quick Start guide above
 ```
 
 **Visit http://localhost:3000 and start making a difference!** 🌟
