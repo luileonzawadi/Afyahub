@@ -8,7 +8,7 @@ import { Card } from '../../components/Card';
 import { useRouter } from 'expo-router';
 
 export default function Dashboard() {
-    const { user, logout } = useAuth();
+    const { user } = useAuth();
     const [progress, setProgress] = useState<any>(null);
     const [loading, setLoading] = useState(true);
     const [refreshing, setRefreshing] = useState(false);
@@ -36,15 +36,6 @@ export default function Dashboard() {
         fetchData();
     };
 
-    const handleLogout = async () => {
-        try {
-            await logout();
-            router.replace('/auth/login');
-        } catch (error) {
-            Alert.alert('Error', 'Failed to logout');
-        }
-    };
-
     return (
         <View style={styles.container}>
             <View style={styles.header}>
@@ -52,9 +43,6 @@ export default function Dashboard() {
                     <Text style={styles.greeting}>Welcome back,</Text>
                     <Text style={styles.username}>{user?.name || 'Learner'}!</Text>
                 </View>
-                <TouchableOpacity onPress={handleLogout} style={styles.logoutBtn}>
-                    <FontAwesome name="sign-out" size={20} color={Colors.primary} />
-                </TouchableOpacity>
             </View>
 
             <ScrollView
@@ -80,18 +68,28 @@ export default function Dashboard() {
                     </Card>
                 </View>
 
-                <Text style={styles.sectionTitle}>My Courses</Text>
+                <View style={styles.sectionHeader}>
+                    <Text style={styles.sectionTitle}>My Courses</Text>
+                    <TouchableOpacity onPress={() => router.push('/course-list')}>
+                        <Text style={styles.browseAll}>Browse All</Text>
+                    </TouchableOpacity>
+                </View>
                 {progress?.enrolledCoursesData?.length > 0 ? (
                     progress.enrolledCoursesData.map((course: any) => (
-                        <Card key={course.id} style={styles.courseCard}>
-                            <View style={styles.courseHeader}>
-                                <Text style={styles.courseTitle}>{course.title}</Text>
-                                <Text style={styles.progressText}>{course.progress || 0}%</Text>
-                            </View>
-                            <View style={styles.progressBarBg}>
-                                <View style={[styles.progressBarFill, { width: `${course.progress || 0}%` }]} />
-                            </View>
-                        </Card>
+                        <TouchableOpacity
+                            key={course.id}
+                            onPress={() => router.push(`/course-detail?id=${course.id}`)}
+                        >
+                            <Card style={styles.courseCard}>
+                                <View style={styles.courseHeader}>
+                                    <Text style={styles.courseTitle}>{course.title}</Text>
+                                    <Text style={styles.progressText}>{course.progress || 0}%</Text>
+                                </View>
+                                <View style={styles.progressBarBg}>
+                                    <View style={[styles.progressBarFill, { width: `${course.progress || 0}%` }]} />
+                                </View>
+                            </Card>
+                        </TouchableOpacity>
                     ))
                 ) : (
                     <Card style={styles.emptyCard}>
@@ -139,6 +137,17 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         marginBottom: 16,
         color: Colors.text,
+    },
+    sectionHeader: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginBottom: 16,
+    },
+    browseAll: {
+        color: Colors.primary,
+        fontSize: 14,
+        fontWeight: '600',
     },
     statsGrid: {
         flexDirection: 'row',
