@@ -28,18 +28,21 @@ export default function Forum() {
     }, []);
 
     const fetchTopics = async () => {
-        try {
-            const response = await api.get('/forum/topics');
-            setTopics(response.data);
-        } catch (error) {
-            console.error('Error fetching topics:', error);
-        } finally {
-            setLoading(false);
-        }
+        setTopics([{
+            id: 1,
+            title: 'Welcome to the Community',
+            excerpt: 'Introduce yourself and connect with others',
+            category: 'General',
+            author: 'Admin',
+            createdAt: new Date().toISOString(),
+            commentsCount: 5,
+            votesCount: 10
+        }]);
+        setLoading(false);
     };
 
     const handleCreateTopic = () => {
-        Alert.alert('Create Topic', 'Topic creation feature coming soon!');
+        router.push('/(app)/create-topic');
     };
 
     const renderTopic = ({ item }: { item: Topic }) => (

@@ -2,17 +2,18 @@ import React, { useState } from 'react';
 import { StyleSheet, View, Text, ScrollView, TouchableOpacity, Alert, Switch } from 'react-native';
 import { useRouter } from 'expo-router';
 import { FontAwesome } from '@expo/vector-icons';
-import { useAuth } from '../../../context/AuthContext';
-import { Colors } from '../../../constants/Colors';
-import { Card } from '../../../components/Card';
-import Button from '../../../components/Button';
+import { useAuth } from '../../context/AuthContext';
+import { useTheme } from '../../context/ThemeContext';
+import { Colors } from '../../constants/Colors';
+import { Card } from '../../components/Card';
+import Button from '../../components/Button';
 
 export default function Settings() {
     const router = useRouter();
     const { logout } = useAuth();
+    const { isDarkMode, toggleDarkMode } = useTheme();
 
     const [settings, setSettings] = useState({
-        darkMode: false,
         notifications: true,
         autoPlay: true,
         downloadQuality: 'high',
@@ -74,8 +75,8 @@ export default function Settings() {
                 {
                     label: 'Dark Mode',
                     type: 'switch',
-                    value: settings.darkMode,
-                    onValueChange: () => toggleSetting('darkMode'),
+                    value: isDarkMode,
+                    onValueChange: toggleDarkMode,
                 },
             ],
         },

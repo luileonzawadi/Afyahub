@@ -1,16 +1,17 @@
-import { Redirect, Tabs } from 'expo-router';
-import { ActivityIndicator, View } from 'react-native';
+import { Redirect, Tabs, router } from 'expo-router';
+import { View, Text, TouchableOpacity } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
 import { useAuth } from '../../context/AuthContext';
-import { Colors } from '../../constants/Colors';
+import { useTheme } from '../../context/ThemeContext';
 
 export default function AppLayout() {
     const { user, isLoading } = useAuth();
+    const { colors } = useTheme();
 
     if (isLoading) {
         return (
             <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-                <ActivityIndicator size="large" color={Colors.primary} />
+                <Text>Loading...</Text>
             </View>
         );
     }
@@ -22,12 +23,46 @@ export default function AppLayout() {
     return (
         <Tabs
             screenOptions={{
-                headerShown: false,
-                tabBarActiveTintColor: Colors.primary,
-                tabBarInactiveTintColor: Colors.textSecondary,
+                headerShown: true,
+                headerTitle: () => (
+                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                        <FontAwesome name="heartbeat" size={20} color="#4A90E2" style={{ marginRight: 8 }} />
+                        <Text style={{ color: '#2C3E50', fontWeight: 'bold', fontSize: 16 }}>AfyaHub</Text>
+                    </View>
+                ),
+                headerStyle: {
+                    backgroundColor: '#FFFFFF', // White header
+                },
+                headerTitleStyle: {
+                    color: '#2C3E50',
+                    fontWeight: 'bold',
+                    fontSize: 16,
+                },
+                headerRight: () => (
+                    <TouchableOpacity onPress={() => router.push('/(app)/profile')} style={{ marginRight: 15 }}>
+                        <FontAwesome name="user" size={24} color={colors.primary} />
+                    </TouchableOpacity>
+                ),
+                tabBarActiveTintColor: '#FFFFFF',
+                tabBarInactiveTintColor: '#B8D4F0',
                 tabBarStyle: {
-                    backgroundColor: Colors.surface,
-                    borderTopColor: Colors.border,
+                    backgroundColor: '#4A90E2',
+                    borderTopColor: '#3A7BC8',
+                    borderTopWidth: 1,
+                    elevation: 8,
+                    shadowColor: '#000',
+                    shadowOffset: { width: 0, height: -2 },
+                    shadowOpacity: 0.1,
+                    shadowRadius: 4,
+                    height: 60,
+                    paddingBottom: 5,
+                    paddingTop: 5,
+                    paddingHorizontal: 10,
+                },
+                tabBarLabelStyle: {
+                    fontSize: 10,
+                    fontWeight: '600',
+                    flexWrap: 'wrap',
                 },
             }}
         >
@@ -61,12 +96,34 @@ export default function AppLayout() {
             <Tabs.Screen
                 name="profile"
                 options={{
-                    title: 'Profile',
-                    tabBarIcon: ({ color, size }) => (
-                        <FontAwesome name="user" size={size} color={color} />
-                    ),
+                    href: null,
                 }}
             />
+            <Tabs.Screen
+                name="course-detail"
+                options={{
+                    href: null,
+                }}
+            />
+            <Tabs.Screen
+                name="module-viewer"
+                options={{
+                    href: null,
+                }}
+            />
+            <Tabs.Screen
+                name="create-topic"
+                options={{
+                    href: null,
+                }}
+            />
+            <Tabs.Screen
+                name="admin-dashboard"
+                options={{
+                    href: null,
+                }}
+            />
+
         </Tabs>
     );
 }

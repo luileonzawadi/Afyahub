@@ -1,10 +1,10 @@
 import React from 'react';
-import { View, StyleSheet, ViewStyle } from 'react-native';
+import { View, StyleSheet, ViewStyle, StyleProp } from 'react-native';
 import { Colors } from '../constants/Colors';
 
 interface CardProps {
     children: React.ReactNode;
-    style?: ViewStyle;
+    style?: StyleProp<ViewStyle>;
 }
 
 export const Card = ({ children, style }: CardProps) => {
@@ -18,13 +18,16 @@ export const Card = ({ children, style }: CardProps) => {
 const styles = StyleSheet.create({
     card: {
         backgroundColor: Colors.surface,
-        borderRadius: 12,
-        padding: 16,
-        marginBottom: 16,
+        borderRadius: 8,
+        padding: 12,
+        marginBottom: 8,
+        marginHorizontal: 4,
         shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
+        shadowOffset: { width: 0, height: 1 },
         shadowOpacity: 0.05,
-        shadowRadius: 4,
-        elevation: 3,
+        shadowRadius: 2,
+        elevation: 2,
+        maxWidth: '100%',
+        flexShrink: 1,
     },
 });

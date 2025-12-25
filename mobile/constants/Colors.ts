@@ -1,11 +1,13 @@
 export const Colors = {
-    primary: '#2563eb', // Blue-600
-    secondary: '#1e40af', // Blue-800
-    background: '#f8fafc', // Slate-50
-    surface: '#ffffff',
-    text: '#0f172a', // Slate-900
-    textSecondary: '#64748b', // Slate-500
-    border: '#e2e8f0', // Slate-200
-    error: '#ef4444', // Red-500
-    success: '#22c55e', // Green-500
+    primary: '#4A90E2', // Calming blue
+    secondary: '#7B68EE', // Medium slate blue
+    background: '#F8F9FA', // Very light gray-blue
+    surface: '#FFFFFF', // Clean white for cards
+    text: '#2C3E50', // Dark blue-gray
+    textSecondary: '#5A6C7D', // Muted blue-gray
+    border: '#E1E8ED', // Soft gray border
+    error: '#E74C3C', // Soft red
+    success: '#27AE60', // Calming green
+    headerBg: '#FFE5E5', // Soft pink for header
+    footerBg: '#E5F5E5', // Soft green for footer
 };

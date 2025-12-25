@@ -39,14 +39,15 @@ export default function CourseList() {
     }, [courses, searchQuery]);
 
     const fetchCourses = async () => {
-        try {
-            const response = await api.get('/courses/');
-            setCourses(response.data);
-        } catch (error) {
-            console.error('Error fetching courses:', error);
-        } finally {
-            setLoading(false);
-        }
+        setCourses([{
+            id: 1,
+            title: 'HIV/AIDS Basics',
+            description: 'Learn the fundamentals of HIV/AIDS prevention and care',
+            image: 'https://via.placeholder.com/300x200',
+            duration: '2 hours',
+            level: 'Beginner'
+        }]);
+        setLoading(false);
     };
 
     const renderCourse = ({ item }: { item: Course }) => (

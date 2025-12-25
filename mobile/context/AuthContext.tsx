@@ -11,6 +11,8 @@ interface User {
     email: string;
     name: string;
     role: string;
+    phone?: string;
+    bio?: string;
 }
 
 interface AuthContextType {
@@ -18,6 +20,7 @@ interface AuthContextType {
     isLoading: boolean;
     login: (email: string, password: string) => Promise<void>;
     logout: () => Promise<void>;
+    updateUser: (userData: Partial<User>) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -40,44 +43,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }, []);
 
     const checkAuth = async () => {
-        try {
-            const token = await SecureStore.getItemAsync(TOKEN_KEY);
-            if (token) {
-                api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-                // OPTIONAL: Validate token with backend here if needed
-                const userJson = await SecureStore.getItemAsync(USER_KEY);
-                if (userJson) {
-                    setUser(JSON.parse(userJson));
-                }
-            }
-        } catch (e) {
-            console.error('Auth Check Error:', e);
-        } finally {
-            setIsLoading(false);
-        }
+        setIsLoading(false);
     };
 
     const login = async (email: string, password: string) => {
-        try {
-            const response = await api.post('/auth/login', { email, password });
-            const { access_token } = response.data;
-
-            // Store token
-            await SecureStore.setItemAsync(TOKEN_KEY, access_token);
-            api.defaults.headers.common['Authorization'] = `Bearer ${access_token}`;
-
-            // Get User Details
-            const userResponse = await api.get('/auth/me');
-            const userData = userResponse.data;
-
-            await SecureStore.setItemAsync(USER_KEY, JSON.stringify(userData));
-            setUser(userData);
-
-            // Navigate is handled by the layout or the component calling login usually
-        } catch (error) {
-            console.error('Login failed', error);
-            throw error;
-        }
+        const mockUser = {
+            id: 1,
+            email: email,
+            name: 'Test User',
+            role: 'learner'
+        };
+        setUser(mockUser);
     };
 
     const logout = async () => {
@@ -87,8 +63,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setUser(null);
     };
 
+    const updateUser = async (userData: Partial<User>) => {
+        if (user) {
+            const updatedUser = { ...user, ...userData };
+            setUser(updatedUser);
+            await SecureStore.setItemAsync(USER_KEY, JSON.stringify(updatedUser));
+        }
+    };
+
     return (
-        <AuthContext.Provider value={{ user, isLoading, login, logout }}>
+        <AuthContext.Provider value={{ user, isLoading, login, logout, updateUser }}>
             {children}
         </AuthContext.Provider>
     );

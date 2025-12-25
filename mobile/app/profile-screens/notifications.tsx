@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { StyleSheet, View, Text, ScrollView, TouchableOpacity, Switch } from 'react-native';
 import { useRouter } from 'expo-router';
 import { FontAwesome } from '@expo/vector-icons';
-import { Colors } from '../../../constants/Colors';
-import { Card } from '../../../components/Card';
+import { Colors } from '../../constants/Colors';
+import { Card } from '../../components/Card';
 
 interface NotificationSetting {
     id: string;

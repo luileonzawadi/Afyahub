@@ -14,6 +14,12 @@
   padding: 20px 0;
 }
 
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
 .logo {
   display: flex;
   align-items: center;
@@ -59,6 +65,10 @@
   align-items: center;
   gap: 8px;
   color: var(--body-text);
+}
+
+.user-name-mobile {
+  display: inline;
 }
 
 .user-avatar {
@@ -249,6 +259,20 @@
     display: block;
   }
 
+  .user-name-mobile {
+    display: none;
+  }
+
+  .user-avatar {
+    padding: 8px;
+    min-width: 44px;
+    justify-content: center;
+  }
+
+  .user-dropdown {
+    width: 280px;
+  }
+
   .nav {
     position: fixed;
     top: 70px;
@@ -268,9 +292,5 @@
     transform: translateY(0);
     opacity: 1;
     pointer-events: all;
-  }
-
-  .user-menu {
-    flex-direction: column;
   }
 }

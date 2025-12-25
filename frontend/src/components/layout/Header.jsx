@@ -67,81 +67,6 @@ const Header = () => {
                 {user.role === 'admin' && (
                   <Link to="/admin" onClick={() => setMenuOpen(false)}>Admin</Link>
                 )}
-                <div className="user-menu" ref={dropdownRef}>
-                  <button className="user-avatar" onClick={() => setDropdownOpen(!dropdownOpen)}>
-                    <FiUser />
-                    <span>{user.name}</span>
-                    {notificationCount > 0 && (
-                      <span className="notification-badge">{notificationCount}</span>
-                    )}
-                  </button>
-                  {dropdownOpen && (
-                    <div className="user-dropdown">
-                      <div className="dropdown-header">
-                        <div className="user-avatar-large">
-                          <FiUser size={32} />
-                        </div>
-                        <div>
-                          <div className="user-name">{user.name}</div>
-                          <div className="user-email">{user.email}</div>
-                        </div>
-                      </div>
-                      {user.role !== 'admin' && (
-                        <div className="dropdown-stats">
-                          <div className="stat-item">
-                            <FiBook />
-                            <div>
-                              <div className="stat-value">{progress?.enrolledCourses || 0}</div>
-                              <div className="stat-label">Courses</div>
-                            </div>
-                          </div>
-                          <div className="stat-item">
-                            <FiTrendingUp />
-                            <div>
-                              <div className="stat-value">{progress?.completedModules || 0}</div>
-                              <div className="stat-label">Completed</div>
-                            </div>
-                          </div>
-                          <div className="stat-item">
-                            <FiAward />
-                            <div>
-                              <div className="stat-value">{progress?.certificates || 0}</div>
-                              <div className="stat-label">Certificates</div>
-                            </div>
-                          </div>
-                        </div>
-                      )}
-                      <div className="dropdown-links">
-                        {user.role !== 'admin' && (
-                          <>
-                            <Link to="/dashboard" onClick={() => { setDropdownOpen(false); setMenuOpen(false); }}>
-                              <FiBook /> My Dashboard
-                            </Link>
-                            <Link to="/bookmarks" onClick={() => { setDropdownOpen(false); setMenuOpen(false); }}>
-                              <FiBookmark /> Bookmarks
-                            </Link>
-                            <Link to="/notifications" onClick={() => { setDropdownOpen(false); setMenuOpen(false); }}>
-                              <FiBell /> Notifications
-                            </Link>
-                          </>
-                        )}
-                        {user.role === 'admin' && (
-                          <Link to="/admin" onClick={() => { setDropdownOpen(false); setMenuOpen(false); }}>
-                            <FiBook /> Admin Dashboard
-                          </Link>
-                        )}
-                        <Link to="/profile" onClick={() => { setDropdownOpen(false); setMenuOpen(false); }}>
-                          <FiSettings /> Settings
-                        </Link>
-                      </div>
-                      <div className="dropdown-footer">
-                        <button onClick={() => { handleLogout(); setDropdownOpen(false); }} className="logout-btn-dropdown">
-                          <FiLogOut /> Logout
-                        </button>
-                      </div>
-                    </div>
-                  )}
-                </div>
               </>
             ) : (
               <>
@@ -153,9 +78,89 @@ const Header = () => {
             )}
           </nav>
 
-          <button className="menu-toggle" onClick={() => setMenuOpen(!menuOpen)}>
-            {menuOpen ? <FiX /> : <FiMenu />}
-          </button>
+          {user && (
+            <div className="user-menu" ref={dropdownRef}>
+              <button className="user-avatar" onClick={() => setDropdownOpen(!dropdownOpen)}>
+                <FiUser />
+                <span className="user-name-mobile">{user.name}</span>
+                {notificationCount > 0 && (
+                  <span className="notification-badge">{notificationCount}</span>
+                )}
+              </button>
+              {dropdownOpen && (
+                <div className="user-dropdown">
+                  <div className="dropdown-header">
+                    <div className="user-avatar-large">
+                      <FiUser size={32} />
+                    </div>
+                    <div>
+                      <div className="user-name">{user.name}</div>
+                      <div className="user-email">{user.email}</div>
+                    </div>
+                  </div>
+                  {user.role !== 'admin' && (
+                    <div className="dropdown-stats">
+                      <div className="stat-item">
+                        <FiBook />
+                        <div>
+                          <div className="stat-value">{progress?.enrolledCourses || 0}</div>
+                          <div className="stat-label">Courses</div>
+                        </div>
+                      </div>
+                      <div className="stat-item">
+                        <FiTrendingUp />
+                        <div>
+                          <div className="stat-value">{progress?.completedModules || 0}</div>
+                          <div className="stat-label">Completed</div>
+                        </div>
+                      </div>
+                      <div className="stat-item">
+                        <FiAward />
+                        <div>
+                          <div className="stat-value">{progress?.certificates || 0}</div>
+                          <div className="stat-label">Certificates</div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                  <div className="dropdown-links">
+                    {user.role !== 'admin' && (
+                      <>
+                        <Link to="/dashboard" onClick={() => { setDropdownOpen(false); setMenuOpen(false); }}>
+                          <FiBook /> My Dashboard
+                        </Link>
+                        <Link to="/bookmarks" onClick={() => { setDropdownOpen(false); setMenuOpen(false); }}>
+                          <FiBookmark /> Bookmarks
+                        </Link>
+                        <Link to="/notifications" onClick={() => { setDropdownOpen(false); setMenuOpen(false); }}>
+                          <FiBell /> Notifications
+                        </Link>
+                      </>
+                    )}
+                    {user.role === 'admin' && (
+                      <Link to="/admin" onClick={() => { setDropdownOpen(false); setMenuOpen(false); }}>
+                        <FiBook /> Admin Dashboard
+                      </Link>
+                    )}
+                    <Link to="/profile" onClick={() => { setDropdownOpen(false); setMenuOpen(false); }}>
+                      <FiSettings /> Settings
+                    </Link>
+                  </div>
+                  <div className="dropdown-footer">
+                    <button onClick={() => { handleLogout(); setDropdownOpen(false); }} className="logout-btn-dropdown">
+                      <FiLogOut /> Logout
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
+          <div className="header-right">
+            <button className="menu-toggle" onClick={() => setMenuOpen(!menuOpen)}>
+              {menuOpen ? <FiX /> : <FiMenu />}
+            </button>
+          </div>
         </div>
       </div>
     </header>

@@ -2,10 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { StyleSheet, View, Text, ScrollView, TouchableOpacity, FlatList } from 'react-native';
 import { useRouter } from 'expo-router';
 import { FontAwesome } from '@expo/vector-icons';
-import { useAuth } from '../../../context/AuthContext';
-import { Colors } from '../../../constants/Colors';
-import { Card } from '../../../components/Card';
-import Button from '../../../components/Button';
+import { useAuth } from '../../context/AuthContext';
+import { Colors } from '../../constants/Colors';
+import { Card } from '../../components/Card';
+import Button from '../../components/Button';
 
 interface Bookmark {
     id: string;

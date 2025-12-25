@@ -1,30 +1,42 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, View, Text, ScrollView, RefreshControl, TouchableOpacity, Alert } from 'react-native';
+import { StyleSheet, View, Text, ScrollView, RefreshControl, TouchableOpacity, Alert, Image } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
 import { useAuth } from '../../context/AuthContext';
-import { Colors } from '../../constants/Colors';
+import { useTheme } from '../../context/ThemeContext';
 import api from '../../services/api';
 import { Card } from '../../components/Card';
 import { useRouter } from 'expo-router';
 
 export default function Dashboard() {
     const { user } = useAuth();
+    const { colors } = useTheme();
     const [progress, setProgress] = useState<any>(null);
     const [loading, setLoading] = useState(true);
     const [refreshing, setRefreshing] = useState(false);
     const router = useRouter();
 
     const fetchData = async () => {
-        try {
-            // Fetch progress
-            const progressRes = await api.get('/users/progress');
-            setProgress(progressRes.data);
-        } catch (error) {
-            console.log('Error fetching dashboard data:', error);
-        } finally {
-            setLoading(false);
-            setRefreshing(false);
-        }
+        setProgress({
+            enrolledCourses: 3,
+            completedModules: 12,
+            certificates: 1,
+            enrolledCoursesData: [
+                {
+                    id: 1,
+                    title: 'HIV/AIDS Fundamentals',
+                    progress: 75,
+                    image: 'https://via.placeholder.com/300x150/4A90E2/FFFFFF?text=HIV+Basics'
+                },
+                {
+                    id: 2,
+                    title: 'Prevention Strategies',
+                    progress: 45,
+                    image: 'https://via.placeholder.com/300x150/2ECC71/FFFFFF?text=Prevention'
+                }
+            ]
+        });
+        setLoading(false);
+        setRefreshing(false);
     };
 
     useEffect(() => {
@@ -37,64 +49,71 @@ export default function Dashboard() {
     };
 
     return (
-        <View style={styles.container}>
-            <View style={styles.header}>
+        <View style={[styles.container, { backgroundColor: colors.background }]}>
+            <View style={[styles.header, { backgroundColor: colors.surface }]}>
                 <View>
-                    <Text style={styles.greeting}>Welcome back,</Text>
-                    <Text style={styles.username}>{user?.name || 'Learner'}!</Text>
+                    <Text style={[styles.greeting, { color: colors.textSecondary }]}>Welcome back,</Text>
+                    <Text style={[styles.username, { color: colors.text }]}>{user?.name || 'Learner'}!</Text>
                 </View>
+                <TouchableOpacity style={styles.streakContainer}>
+                    <FontAwesome name="fire" size={20} color="#ff6b35" />
+                    <Text style={[styles.streakText, { color: colors.text }]}>7 days</Text>
+                </TouchableOpacity>
             </View>
 
             <ScrollView
                 contentContainerStyle={styles.scrollContent}
                 refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
             >
-                <Text style={styles.sectionTitle}>Overview</Text>
+                <Text style={[styles.sectionTitle, { color: colors.text }]}>Overview</Text>
                 <View style={styles.statsGrid}>
                     <Card style={styles.statCard}>
-                        <FontAwesome name="book" size={24} color={Colors.primary} />
-                        <Text style={styles.statValue}>{progress?.enrolledCourses || 0}</Text>
-                        <Text style={styles.statLabel}>Enrolled</Text>
+                        <FontAwesome name="book" size={24} color="#4A90E2" />
+                        <Text style={[styles.statValue, { color: colors.text }]}>{progress?.enrolledCourses || 0}</Text>
+                        <Text style={[styles.statLabel, { color: colors.textSecondary }]}>Enrolled</Text>
                     </Card>
                     <Card style={styles.statCard}>
-                        <FontAwesome name="check-circle" size={24} color={Colors.success} />
-                        <Text style={styles.statValue}>{progress?.completedModules || 0}</Text>
-                        <Text style={styles.statLabel}>Completed</Text>
+                        <FontAwesome name="check-circle" size={24} color="#2ECC71" />
+                        <Text style={[styles.statValue, { color: colors.text }]}>{progress?.completedModules || 0}</Text>
+                        <Text style={[styles.statLabel, { color: colors.textSecondary }]}>Completed</Text>
                     </Card>
                     <Card style={styles.statCard}>
-                        <FontAwesome name="trophy" size={24} color="#eab308" />
-                        <Text style={styles.statValue}>{progress?.certificates || 0}</Text>
-                        <Text style={styles.statLabel}>Certificates</Text>
+                        <FontAwesome name="trophy" size={24} color="#F39C12" />
+                        <Text style={[styles.statValue, { color: colors.text }]}>{progress?.certificates || 0}</Text>
+                        <Text style={[styles.statLabel, { color: colors.textSecondary }]}>Certificates</Text>
                     </Card>
                 </View>
 
                 <View style={styles.sectionHeader}>
-                    <Text style={styles.sectionTitle}>My Courses</Text>
-                    <TouchableOpacity onPress={() => router.push('/course-list')}>
-                        <Text style={styles.browseAll}>Browse All</Text>
+                    <Text style={[styles.sectionTitle, { color: colors.text }]}>My Courses</Text>
+                    <TouchableOpacity onPress={() => router.push('/(app)/course-list')}>
+                        <Text style={[styles.browseAll, { color: colors.primary }]}>Browse All</Text>
                     </TouchableOpacity>
                 </View>
                 {progress?.enrolledCoursesData?.length > 0 ? (
                     progress.enrolledCoursesData.map((course: any) => (
                         <TouchableOpacity
                             key={course.id}
-                            onPress={() => router.push(`/course-detail?id=${course.id}`)}
+                            onPress={() => router.push(`/(app)/course-detail?id=${course.id}`)}
                         >
-                            <Card style={styles.courseCard}>
-                                <View style={styles.courseHeader}>
-                                    <Text style={styles.courseTitle}>{course.title}</Text>
-                                    <Text style={styles.progressText}>{course.progress || 0}%</Text>
-                                </View>
-                                <View style={styles.progressBarBg}>
-                                    <View style={[styles.progressBarFill, { width: `${course.progress || 0}%` }]} />
+                            <Card style={[styles.courseCard, { backgroundColor: colors.surface }]}>
+                                <Image source={{ uri: course.image }} style={styles.courseImage} />
+                                <View style={styles.courseContent}>
+                                    <View style={styles.courseHeader}>
+                                        <Text style={[styles.courseTitle, { color: colors.text }]}>{course.title}</Text>
+                                        <Text style={[styles.progressText, { color: colors.textSecondary }]}>{course.progress || 0}%</Text>
+                                    </View>
+                                    <View style={[styles.progressBarBg, { backgroundColor: colors.border }]}>
+                                        <View style={[styles.progressBarFill, { width: `${course.progress || 0}%`, backgroundColor: colors.primary }]} />
+                                    </View>
                                 </View>
                             </Card>
                         </TouchableOpacity>
                     ))
                 ) : (
-                    <Card style={styles.emptyCard}>
-                        <FontAwesome name="book" size={40} color={Colors.textSecondary} />
-                        <Text style={styles.emptyText}>No enrolled courses yet</Text>
+                    <Card style={[styles.emptyCard, { backgroundColor: colors.surface }]}>
+                        <FontAwesome name="book" size={40} color={colors.textSecondary} />
+                        <Text style={[styles.emptyText, { color: colors.textSecondary }]}>No enrolled courses yet</Text>
                     </Card>
                 )}
             </ScrollView>
@@ -105,29 +124,35 @@ export default function Dashboard() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: Colors.background,
     },
     header: {
         padding: 24,
         paddingTop: 60,
-        backgroundColor: Colors.surface,
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
         borderBottomWidth: 1,
-        borderBottomColor: Colors.border,
+        borderBottomColor: '#E1E8ED',
     },
     greeting: {
         fontSize: 14,
-        color: Colors.textSecondary,
     },
     username: {
         fontSize: 20,
         fontWeight: 'bold',
-        color: Colors.text,
     },
-    logoutBtn: {
-        padding: 8,
+    streakContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: '#FFF5F0',
+        paddingHorizontal: 12,
+        paddingVertical: 8,
+        borderRadius: 20,
+    },
+    streakText: {
+        marginLeft: 6,
+        fontSize: 12,
+        fontWeight: '600',
     },
     scrollContent: {
         padding: 24,
@@ -136,7 +161,6 @@ const styles = StyleSheet.create({
         fontSize: 18,
         fontWeight: 'bold',
         marginBottom: 16,
-        color: Colors.text,
     },
     sectionHeader: {
         flexDirection: 'row',
@@ -145,7 +169,6 @@ const styles = StyleSheet.create({
         marginBottom: 16,
     },
     browseAll: {
-        color: Colors.primary,
         fontSize: 14,
         fontWeight: '600',
     },
@@ -158,43 +181,48 @@ const styles = StyleSheet.create({
         flex: 1,
         marginHorizontal: 4,
         alignItems: 'center',
-        padding: 12,
+        padding: 16,
+        borderRadius: 12,
     },
     statValue: {
         fontSize: 20,
         fontWeight: 'bold',
         marginTop: 8,
-        color: Colors.text,
     },
     statLabel: {
         fontSize: 12,
-        color: Colors.textSecondary,
     },
     courseCard: {
-        marginBottom: 12,
+        marginBottom: 16,
+        borderRadius: 12,
+        overflow: 'hidden',
+    },
+    courseImage: {
+        width: '100%',
+        height: 120,
+    },
+    courseContent: {
+        padding: 16,
     },
     courseHeader: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        marginBottom: 8,
+        marginBottom: 12,
     },
     courseTitle: {
         fontSize: 16,
         fontWeight: '600',
-        color: Colors.text,
+        flex: 1,
     },
     progressText: {
         fontSize: 14,
-        color: Colors.textSecondary,
     },
     progressBarBg: {
         height: 6,
-        backgroundColor: Colors.border,
         borderRadius: 3,
     },
     progressBarFill: {
         height: '100%',
-        backgroundColor: Colors.primary,
         borderRadius: 3,
     },
     emptyCard: {
@@ -203,6 +231,5 @@ const styles = StyleSheet.create({
     },
     emptyText: {
         marginTop: 16,
-        color: Colors.textSecondary,
     },
 });
