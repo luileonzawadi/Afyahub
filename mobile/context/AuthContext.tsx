@@ -1,25 +1,16 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import * as SecureStore from 'expo-secure-store';
 import { useRouter, useSegments } from 'expo-router';
-import api from '../services/api';
-
-const TOKEN_KEY = 'auth_token';
-const USER_KEY = 'auth_user';
-
-interface User {
-    id: number;
-    email: string;
-    name: string;
-    role: string;
-    phone?: string;
-    bio?: string;
-}
+import { onAuthStateChanged } from 'firebase/auth';
+import { auth } from '../config/firebase';
+import { authService, User } from '../services/authService';
 
 interface AuthContextType {
     user: User | null;
     isLoading: boolean;
     login: (email: string, password: string) => Promise<void>;
     logout: () => Promise<void>;
+    register: (email: string, password: string, name: string) => Promise<void>;
     updateUser: (userData: Partial<User>) => Promise<void>;
 }
 
@@ -39,27 +30,31 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const router = useRouter();
 
     useEffect(() => {
-        checkAuth();
+        const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+            if (firebaseUser) {
+                const userData = await authService.getCurrentUser();
+                setUser(userData);
+            } else {
+                setUser(null);
+            }
+            setIsLoading(false);
+        });
+
+        return unsubscribe;
     }, []);
 
-    const checkAuth = async () => {
-        setIsLoading(false);
+    const login = async (email: string, password: string) => {
+        const userData = await authService.login(email, password);
+        setUser(userData);
     };
 
-    const login = async (email: string, password: string) => {
-        const mockUser = {
-            id: 1,
-            email: email,
-            name: 'Test User',
-            role: 'learner'
-        };
-        setUser(mockUser);
+    const register = async (email: string, password: string, name: string) => {
+        const userData = await authService.register(email, password, name);
+        setUser(userData);
     };
 
     const logout = async () => {
-        await SecureStore.deleteItemAsync(TOKEN_KEY);
-        await SecureStore.deleteItemAsync(USER_KEY);
-        delete api.defaults.headers.common['Authorization'];
+        await authService.logout();
         setUser(null);
     };
 
@@ -67,12 +62,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         if (user) {
             const updatedUser = { ...user, ...userData };
             setUser(updatedUser);
-            await SecureStore.setItemAsync(USER_KEY, JSON.stringify(updatedUser));
         }
     };
 
     return (
-        <AuthContext.Provider value={{ user, isLoading, login, logout, updateUser }}>
+        <AuthContext.Provider value={{ user, isLoading, login, logout, register, updateUser }}>
             {children}
         </AuthContext.Provider>
     );

@@ -5,85 +5,30 @@ import { FontAwesome } from '@expo/vector-icons';
 import { useAuth } from '../../context/AuthContext';
 import { Colors } from '../../constants/Colors';
 import { Card } from '../../components/Card';
-
-interface Achievement {
-    id: string;
-    title: string;
-    description: string;
-    icon: string;
-    unlocked: boolean;
-    unlockedDate?: string;
-    progress?: number;
-    maxProgress?: number;
-}
+import { databaseService, Achievement } from '../../services/databaseService';
 
 export default function Achievements() {
     const router = useRouter();
     const { user } = useAuth();
     const [achievements, setAchievements] = useState<Achievement[]>([]);
     const [activeTab, setActiveTab] = useState<'all' | 'unlocked' | 'locked'>('all');
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        loadAchievements();
-    }, []);
+        if (user) {
+            loadAchievements();
+        }
+    }, [user]);
 
     const loadAchievements = async () => {
         try {
-            // Mock achievements data
-            const mockAchievements: Achievement[] = [
-                {
-                    id: 'first_course',
-                    title: 'First Steps',
-                    description: 'Complete your first course module',
-                    icon: 'graduation-cap',
-                    unlocked: true,
-                    unlockedDate: '2024-01-10',
-                },
-                {
-                    id: 'course_master',
-                    title: 'Course Master',
-                    description: 'Complete 5 courses',
-                    icon: 'trophy',
-                    unlocked: false,
-                    progress: 2,
-                    maxProgress: 5,
-                },
-                {
-                    id: 'forum_helper',
-                    title: 'Forum Helper',
-                    description: 'Help 10 fellow learners in the forum',
-                    icon: 'comments',
-                    unlocked: false,
-                    progress: 3,
-                    maxProgress: 10,
-                },
-                {
-                    id: 'streak_master',
-                    title: 'Learning Streak',
-                    description: 'Maintain a 7-day learning streak',
-                    icon: 'fire',
-                    unlocked: true,
-                    unlockedDate: '2024-01-15',
-                },
-                {
-                    id: 'early_bird',
-                    title: 'Early Bird',
-                    description: 'Complete a lesson before 8 AM',
-                    icon: 'sun-o',
-                    unlocked: false,
-                },
-                {
-                    id: 'night_owl',
-                    title: 'Night Owl',
-                    description: 'Complete a lesson after 10 PM',
-                    icon: 'moon-o',
-                    unlocked: true,
-                    unlockedDate: '2024-01-12',
-                },
-            ];
-            setAchievements(mockAchievements);
+            setLoading(true);
+            const userAchievements = await databaseService.getUserAchievements(user!.id);
+            setAchievements(userAchievements);
         } catch (error) {
             console.error('Failed to load achievements:', error);
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -128,7 +73,7 @@ export default function Achievements() {
                     </Text>
                     {item.unlocked && item.unlockedDate && (
                         <Text style={styles.unlockedDate}>
-                            Unlocked {new Date(item.unlockedDate).toLocaleDateString()}
+                            Unlocked {item.unlockedDate.toLocaleDateString()}
                         </Text>
                     )}
                     {!item.unlocked && item.progress !== undefined && item.maxProgress && (
