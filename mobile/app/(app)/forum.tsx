@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, View, Text, FlatList, TouchableOpacity, ActivityIndicator, Alert } from 'react-native';
+import { StyleSheet, View, Text, FlatList, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { useRouter } from 'expo-router';
 import { FontAwesome } from '@expo/vector-icons';
 import { Colors } from '../../constants/Colors';
-import api from '../../services/api';
+import { Layout } from '../../constants/Layout';
 import { Card } from '../../components/Card';
-import Button from '../../components/Button';
 
 interface Topic {
     id: number;
@@ -28,15 +27,26 @@ export default function Forum() {
     }, []);
 
     const fetchTopics = async () => {
+        // Simulated API call
         setTopics([{
             id: 1,
             title: 'Welcome to the Community',
-            excerpt: 'Introduce yourself and connect with others',
+            excerpt: 'Introduce yourself and connect with others. We are glad to have you here!',
             category: 'General',
             author: 'Admin',
             createdAt: new Date().toISOString(),
             commentsCount: 5,
             votesCount: 10
+        },
+        {
+            id: 2,
+            title: 'Q&A: Module 1',
+            excerpt: 'Post your questions regarding the first module about HIV fundamentals.',
+            category: 'Coursework',
+            author: 'Instructor Sarah',
+            createdAt: new Date(Date.now() - 86400000).toISOString(),
+            commentsCount: 12,
+            votesCount: 24
         }]);
         setLoading(false);
     };
@@ -47,22 +57,34 @@ export default function Forum() {
 
     const renderTopic = ({ item }: { item: Topic }) => (
         <TouchableOpacity
-            style={styles.topicCard}
             onPress={() => router.push(`/forum-topic?id=${item.id}`)}
+            activeOpacity={0.9}
         >
-            <Card>
+            <Card style={styles.topicCard} variant="elevated">
+                <View style={styles.topicHeader}>
+                    <Text style={styles.topicCategory}>{item.category}</Text>
+                    <Text style={styles.topicDate}>{new Date(item.createdAt).toLocaleDateString()}</Text>
+                </View>
                 <Text style={styles.topicTitle}>{item.title}</Text>
                 <Text style={styles.topicContent} numberOfLines={2}>
                     {item.excerpt}
                 </Text>
+                <View style={styles.divider} />
                 <View style={styles.topicMeta}>
-                    <Text style={styles.metaText}>By {item.author}</Text>
-                    <Text style={styles.metaText}>
-                        <FontAwesome name="comment" size={12} /> {item.commentsCount}
-                    </Text>
-                    <Text style={styles.metaText}>
-                        {new Date(item.createdAt).toLocaleDateString()}
-                    </Text>
+                    <View style={styles.metaItem}>
+                        <FontAwesome name="user" size={12} color={Colors.textSecondary} />
+                        <Text style={styles.metaText}>{item.author}</Text>
+                    </View>
+                    <View style={styles.metaRight}>
+                        <View style={styles.metaItem}>
+                            <FontAwesome name="comment" size={12} color={Colors.primary} />
+                            <Text style={[styles.metaText, { color: Colors.primary }]}>{item.commentsCount}</Text>
+                        </View>
+                        <View style={[styles.metaItem, { marginLeft: Layout.spacing.m }]}>
+                            <FontAwesome name="thumbs-up" size={12} color={Colors.secondary} />
+                            <Text style={[styles.metaText, { color: Colors.secondary }]}>{item.votesCount}</Text>
+                        </View>
+                    </View>
                 </View>
             </Card>
         </TouchableOpacity>
@@ -91,14 +113,14 @@ export default function Forum() {
                 showsVerticalScrollIndicator={false}
                 ListEmptyComponent={
                     <View style={styles.empty}>
-                        <FontAwesome name="comments" size={40} color={Colors.textSecondary} />
+                        <FontAwesome name="comments" size={48} color={Colors.border} />
                         <Text style={styles.emptyText}>No discussions yet</Text>
                         <Text style={styles.emptySubtext}>Be the first to start a conversation!</Text>
                     </View>
                 }
             />
-            <TouchableOpacity style={styles.fab} onPress={handleCreateTopic}>
-                <FontAwesome name="plus" size={20} color="#fff" />
+            <TouchableOpacity style={styles.fab} onPress={handleCreateTopic} activeOpacity={0.8}>
+                <FontAwesome name="plus" size={24} color="#fff" />
             </TouchableOpacity>
         </View>
     );
@@ -113,65 +135,101 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
+        backgroundColor: Colors.background,
     },
     header: {
-        padding: 16,
-        borderBottomWidth: 1,
-        borderBottomColor: Colors.border,
+        padding: Layout.spacing.l,
         backgroundColor: Colors.surface,
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
+        borderBottomLeftRadius: Layout.borderRadius.xl,
+        borderBottomRightRadius: Layout.borderRadius.xl,
+        ...Layout.shadows.small,
+        zIndex: 1,
     },
     headerTitle: {
         fontSize: 28,
         fontWeight: 'bold',
         color: Colors.text,
         marginBottom: 4,
+        letterSpacing: -0.5,
     },
     headerSubtitle: {
         fontSize: 16,
         color: Colors.textSecondary,
-    },
-    newTopicBtn: {
-        paddingHorizontal: 12,
-        paddingVertical: 6,
+        marginBottom: Layout.spacing.s,
     },
     list: {
-        padding: 16,
+        padding: Layout.spacing.m,
+        paddingTop: Layout.spacing.l,
     },
     topicCard: {
-        marginBottom: 12,
+        marginBottom: Layout.spacing.m,
+        padding: Layout.spacing.m,
+    },
+    topicHeader: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        marginBottom: 6,
+    },
+    topicCategory: {
+        fontSize: 12,
+        fontWeight: 'bold',
+        color: Colors.primary,
+        backgroundColor: Colors.primaryLight,
+        paddingHorizontal: 8,
+        paddingVertical: 2,
+        borderRadius: 4,
+        overflow: 'hidden',
+    },
+    topicDate: {
+        fontSize: 12,
+        color: Colors.textSecondary,
     },
     topicTitle: {
         fontSize: 18,
         fontWeight: 'bold',
         color: Colors.text,
-        marginBottom: 8,
+        marginBottom: 6,
     },
     topicContent: {
         fontSize: 14,
         color: Colors.textSecondary,
-        marginBottom: 12,
+        marginBottom: Layout.spacing.m,
         lineHeight: 20,
+    },
+    divider: {
+        height: 1,
+        backgroundColor: Colors.border,
+        marginBottom: Layout.spacing.s,
     },
     topicMeta: {
         flexDirection: 'row',
         justifyContent: 'space-between',
+        alignItems: 'center',
+    },
+    metaItem: {
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+    metaRight: {
+        flexDirection: 'row',
+        alignItems: 'center',
     },
     metaText: {
         fontSize: 12,
         color: Colors.textSecondary,
+        marginLeft: 6,
+        fontWeight: '500',
     },
     empty: {
         alignItems: 'center',
-        padding: 48,
+        padding: Layout.spacing.xxl,
+        marginTop: Layout.spacing.l,
     },
     emptyText: {
         fontSize: 18,
-        fontWeight: '600',
+        fontWeight: 'bold',
         color: Colors.text,
-        marginTop: 16,
+        marginTop: Layout.spacing.l,
         marginBottom: 8,
     },
     emptySubtext: {
@@ -181,18 +239,14 @@ const styles = StyleSheet.create({
     },
     fab: {
         position: 'absolute',
-        bottom: 24,
-        right: 24,
+        bottom: Layout.spacing.l,
+        right: Layout.spacing.l,
         width: 56,
         height: 56,
         borderRadius: 28,
         backgroundColor: Colors.primary,
         justifyContent: 'center',
         alignItems: 'center',
-        elevation: 8,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.3,
-        shadowRadius: 8,
+        ...Layout.shadows.large,
     },
 });

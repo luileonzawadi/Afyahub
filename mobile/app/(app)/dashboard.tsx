@@ -1,21 +1,21 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, View, Text, ScrollView, RefreshControl, TouchableOpacity, Alert, Image } from 'react-native';
+import { StyleSheet, View, Text, ScrollView, RefreshControl, TouchableOpacity, Image, Platform } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
-import api from '../../services/api';
 import { Card } from '../../components/Card';
 import { useRouter } from 'expo-router';
+import { Colors } from '../../constants/Colors';
+import { Layout } from '../../constants/Layout';
 
 export default function Dashboard() {
     const { user } = useAuth();
-    const { colors } = useTheme();
     const [progress, setProgress] = useState<any>(null);
-    const [loading, setLoading] = useState(true);
     const [refreshing, setRefreshing] = useState(false);
     const router = useRouter();
 
     const fetchData = async () => {
+        // Simulations of API call
         setProgress({
             enrolledCourses: 3,
             completedModules: 12,
@@ -25,17 +25,18 @@ export default function Dashboard() {
                     id: 1,
                     title: 'HIV/AIDS Fundamentals',
                     progress: 75,
-                    image: 'https://via.placeholder.com/300x150/4A90E2/FFFFFF?text=HIV+Basics'
+                    image: 'https://via.placeholder.com/300x150/0056D2/FFFFFF?text=HIV+Basics',
+                    lastAccessed: '2 mins ago'
                 },
                 {
                     id: 2,
                     title: 'Prevention Strategies',
                     progress: 45,
-                    image: 'https://via.placeholder.com/300x150/2ECC71/FFFFFF?text=Prevention'
+                    image: 'https://via.placeholder.com/300x150/20B2AA/FFFFFF?text=Prevention',
+                    lastAccessed: '1 day ago'
                 }
             ]
         });
-        setLoading(false);
         setRefreshing(false);
     };
 
@@ -48,72 +49,127 @@ export default function Dashboard() {
         fetchData();
     };
 
-    return (
-        <View style={[styles.container, { backgroundColor: colors.background }]}>
-            <View style={[styles.header, { backgroundColor: colors.surface }]}>
-                <View>
-                    <Text style={[styles.greeting, { color: colors.textSecondary }]}>Welcome back,</Text>
-                    <Text style={[styles.username, { color: colors.text }]}>{user?.name || 'Learner'}!</Text>
-                </View>
-                <TouchableOpacity style={styles.streakContainer}>
-                    <FontAwesome name="fire" size={20} color="#ff6b35" />
-                    <Text style={[styles.streakText, { color: colors.text }]}>7 days</Text>
-                </TouchableOpacity>
+    const QuickAction = ({ icon, label, onPress, color }: any) => (
+        <TouchableOpacity style={styles.quickAction} onPress={onPress}>
+            <View style={[styles.quickActionIcon, { backgroundColor: color + '15' }]}>
+                <FontAwesome name={icon} size={24} color={color} />
             </View>
+            <Text style={styles.quickActionText}>{label}</Text>
+        </TouchableOpacity>
+    );
 
+    return (
+        <View style={styles.container}>
             <ScrollView
                 contentContainerStyle={styles.scrollContent}
-                refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+                refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={Colors.primary} />}
+                showsVerticalScrollIndicator={false}
             >
-                <Text style={[styles.sectionTitle, { color: colors.text }]}>Overview</Text>
-                <View style={styles.statsGrid}>
-                    <Card style={styles.statCard}>
-                        <FontAwesome name="book" size={24} color="#4A90E2" />
-                        <Text style={[styles.statValue, { color: colors.text }]}>{progress?.enrolledCourses || 0}</Text>
-                        <Text style={[styles.statLabel, { color: colors.textSecondary }]}>Enrolled</Text>
+                <View style={styles.welcomeSection}>
+                    <View>
+                        <Text style={styles.greeting}>Welcome back,</Text>
+                        <Text style={styles.username}>{user?.name || 'Learner'}!</Text>
+                    </View>
+                    <View style={styles.streakBadge}>
+                        <FontAwesome name="fire" size={16} color="#DD6B20" />
+                        <Text style={styles.streakText}>7 days</Text>
+                    </View>
+                </View>
+
+                {/* Statistics Cards */}
+                <View style={styles.statsContainer}>
+                    <Card style={styles.statCard} variant="elevated">
+                        <View style={[styles.statIconContainer, { backgroundColor: Colors.primaryLight }]}>
+                            <FontAwesome name="book" size={20} color={Colors.primary} />
+                        </View>
+                        <Text style={styles.statValue}>{progress?.enrolledCourses || 0}</Text>
+                        <Text style={styles.statLabel}>Enrolled</Text>
                     </Card>
-                    <Card style={styles.statCard}>
-                        <FontAwesome name="check-circle" size={24} color="#2ECC71" />
-                        <Text style={[styles.statValue, { color: colors.text }]}>{progress?.completedModules || 0}</Text>
-                        <Text style={[styles.statLabel, { color: colors.textSecondary }]}>Completed</Text>
+                    <Card style={styles.statCard} variant="elevated">
+                        <View style={[styles.statIconContainer, { backgroundColor: '#E6FFFA' }]}>
+                            <FontAwesome name="check-circle" size={20} color={Colors.secondary} />
+                        </View>
+                        <Text style={styles.statValue}>{progress?.completedModules || 0}</Text>
+                        <Text style={styles.statLabel}>Completed</Text>
                     </Card>
-                    <Card style={styles.statCard}>
-                        <FontAwesome name="trophy" size={24} color="#F39C12" />
-                        <Text style={[styles.statValue, { color: colors.text }]}>{progress?.certificates || 0}</Text>
-                        <Text style={[styles.statLabel, { color: colors.textSecondary }]}>Certificates</Text>
+                    <Card style={styles.statCard} variant="elevated">
+                        <View style={[styles.statIconContainer, { backgroundColor: '#FFFFF0' }]}>
+                            <FontAwesome name="trophy" size={20} color="#D69E2E" />
+                        </View>
+                        <Text style={styles.statValue}>{progress?.certificates || 0}</Text>
+                        <Text style={styles.statLabel}>Certificates</Text>
                     </Card>
                 </View>
 
+                {/* Quick Actions */}
+                <Text style={styles.sectionTitle}>Quick Actions</Text>
+                <View style={styles.quickActionsGrid}>
+                    <QuickAction
+                        icon="search"
+                        label="Find Course"
+                        color={Colors.primary}
+                        onPress={() => router.push('/course-list')}
+                    />
+                    <QuickAction
+                        icon="comments"
+                        label="Community"
+                        color={Colors.secondary}
+                        onPress={() => router.push('/forum')}
+                    />
+                    <QuickAction
+                        icon="user"
+                        label="Profile"
+                        color={Colors.info}
+                        onPress={() => router.push('/profile')}
+                    />
+                    <QuickAction
+                        icon="question-circle"
+                        label="Help"
+                        color={Colors.warning}
+                        onPress={() => { }}
+                    />
+                </View>
+
+                {/* Recent Courses */}
                 <View style={styles.sectionHeader}>
-                    <Text style={[styles.sectionTitle, { color: colors.text }]}>My Courses</Text>
+                    <Text style={styles.sectionTitle}>Continue Learning</Text>
                     <TouchableOpacity onPress={() => router.push('/(app)/course-list')}>
-                        <Text style={[styles.browseAll, { color: colors.primary }]}>Browse All</Text>
+                        <Text style={styles.browseAll}>See All</Text>
                     </TouchableOpacity>
                 </View>
+
                 {progress?.enrolledCoursesData?.length > 0 ? (
                     progress.enrolledCoursesData.map((course: any) => (
                         <TouchableOpacity
                             key={course.id}
                             onPress={() => router.push(`/(app)/course-detail?id=${course.id}`)}
+                            activeOpacity={0.9}
                         >
-                            <Card style={[styles.courseCard, { backgroundColor: colors.surface }]}>
+                            <Card style={styles.courseCard} variant="elevated">
                                 <Image source={{ uri: course.image }} style={styles.courseImage} />
                                 <View style={styles.courseContent}>
                                     <View style={styles.courseHeader}>
-                                        <Text style={[styles.courseTitle, { color: colors.text }]}>{course.title}</Text>
-                                        <Text style={[styles.progressText, { color: colors.textSecondary }]}>{course.progress || 0}%</Text>
+                                        <Text style={styles.courseTitle} numberOfLines={1}>{course.title}</Text>
+                                        <Text style={styles.lastAccessed}>{course.lastAccessed}</Text>
                                     </View>
-                                    <View style={[styles.progressBarBg, { backgroundColor: colors.border }]}>
-                                        <View style={[styles.progressBarFill, { width: `${course.progress || 0}%`, backgroundColor: colors.primary }]} />
+
+                                    <View style={styles.progressContainer}>
+                                        <View style={styles.progressBarBg}>
+                                            <View style={[styles.progressBarFill, { width: `${course.progress || 0}%` }]} />
+                                        </View>
+                                        <Text style={styles.progressText}>{course.progress || 0}%</Text>
                                     </View>
                                 </View>
                             </Card>
                         </TouchableOpacity>
                     ))
                 ) : (
-                    <Card style={[styles.emptyCard, { backgroundColor: colors.surface }]}>
-                        <FontAwesome name="book" size={40} color={colors.textSecondary} />
-                        <Text style={[styles.emptyText, { color: colors.textSecondary }]}>No enrolled courses yet</Text>
+                    <Card style={styles.emptyCard} variant="outlined">
+                        <FontAwesome name="book" size={40} color={Colors.textSecondary} />
+                        <Text style={styles.emptyText}>Start your learning journey today!</Text>
+                        <TouchableOpacity onPress={() => router.push('/course-list')} style={styles.startLearningBtn}>
+                            <Text style={styles.startLearningText}>Browse Courses</Text>
+                        </TouchableOpacity>
                     </Card>
                 )}
             </ScrollView>
@@ -124,112 +180,196 @@ export default function Dashboard() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        backgroundColor: Colors.background,
     },
-    header: {
-        padding: 24,
-        paddingTop: 60,
+    scrollContent: {
+        padding: Layout.spacing.m,
+        paddingBottom: Layout.spacing.xxl,
+    },
+    welcomeSection: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        alignItems: 'center',
-        borderBottomWidth: 1,
-        borderBottomColor: '#E1E8ED',
+        alignItems: 'flex-start',
+        marginBottom: Layout.spacing.l,
+        marginTop: Layout.spacing.s,
     },
     greeting: {
         fontSize: 14,
+        color: Colors.textSecondary,
+        marginBottom: 2,
     },
     username: {
-        fontSize: 20,
-        fontWeight: 'bold',
+        fontSize: 24,
+        fontWeight: '700',
+        color: Colors.text,
+        letterSpacing: -0.5,
     },
-    streakContainer: {
+    streakBadge: {
         flexDirection: 'row',
         alignItems: 'center',
         backgroundColor: '#FFF5F0',
-        paddingHorizontal: 12,
-        paddingVertical: 8,
-        borderRadius: 20,
+        paddingHorizontal: Layout.spacing.m,
+        paddingVertical: Layout.spacing.s,
+        borderRadius: Layout.borderRadius.round,
+        borderWidth: 1,
+        borderColor: '#FED7D7',
     },
     streakText: {
         marginLeft: 6,
         fontSize: 12,
-        fontWeight: '600',
-    },
-    scrollContent: {
-        padding: 24,
-    },
-    sectionTitle: {
-        fontSize: 18,
         fontWeight: 'bold',
-        marginBottom: 16,
+        color: '#C05621',
     },
-    sectionHeader: {
+    statsContainer: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        alignItems: 'center',
-        marginBottom: 16,
-    },
-    browseAll: {
-        fontSize: 14,
-        fontWeight: '600',
-    },
-    statsGrid: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        marginBottom: 32,
+        marginBottom: Layout.spacing.l,
     },
     statCard: {
         flex: 1,
         marginHorizontal: 4,
         alignItems: 'center',
-        padding: 16,
-        borderRadius: 12,
+        padding: Layout.spacing.m,
+        justifyContent: 'center',
+    },
+    statIconContainer: {
+        width: 40,
+        height: 40,
+        borderRadius: 20,
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginBottom: Layout.spacing.s,
     },
     statValue: {
-        fontSize: 20,
+        fontSize: 22,
         fontWeight: 'bold',
-        marginTop: 8,
+        color: Colors.text,
     },
     statLabel: {
         fontSize: 12,
+        color: Colors.textSecondary,
+        marginTop: 2,
+    },
+    sectionHeader: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginBottom: Layout.spacing.m,
+        marginTop: Layout.spacing.m,
+    },
+    sectionTitle: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        color: Colors.text,
+        letterSpacing: -0.5,
+    },
+    browseAll: {
+        fontSize: 14,
+        fontWeight: '600',
+        color: Colors.primary,
+    },
+    quickActionsGrid: {
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        justifyContent: 'space-between',
+        marginBottom: Layout.spacing.l,
+    },
+    quickAction: {
+        width: '48%',
+        backgroundColor: Colors.surface,
+        padding: Layout.spacing.m,
+        borderRadius: Layout.borderRadius.m,
+        alignItems: 'center',
+        marginBottom: Layout.spacing.s,
+        flexDirection: 'row',
+        ...Layout.shadows.small,
+    },
+    quickActionIcon: {
+        width: 36,
+        height: 36,
+        borderRadius: 18,
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginRight: Layout.spacing.s,
+    },
+    quickActionText: {
+        fontSize: 14,
+        fontWeight: '600',
+        color: Colors.text,
     },
     courseCard: {
-        marginBottom: 16,
-        borderRadius: 12,
+        marginBottom: Layout.spacing.m,
+        padding: 0,
         overflow: 'hidden',
     },
     courseImage: {
         width: '100%',
-        height: 120,
+        height: 140,
+        backgroundColor: Colors.primaryLight,
     },
     courseContent: {
-        padding: 16,
+        padding: Layout.spacing.m,
     },
     courseHeader: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        marginBottom: 12,
+        alignItems: 'flex-start',
+        marginBottom: Layout.spacing.s,
     },
     courseTitle: {
         fontSize: 16,
-        fontWeight: '600',
+        fontWeight: 'bold',
+        color: Colors.text,
         flex: 1,
+        marginRight: 8,
     },
-    progressText: {
-        fontSize: 14,
+    lastAccessed: {
+        fontSize: 12,
+        color: Colors.textSecondary,
+        fontStyle: 'italic',
+    },
+    progressContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
     },
     progressBarBg: {
+        flex: 1,
         height: 6,
+        backgroundColor: Colors.border,
         borderRadius: 3,
+        marginRight: Layout.spacing.s,
     },
     progressBarFill: {
         height: '100%',
         borderRadius: 3,
+        backgroundColor: Colors.success,
+    },
+    progressText: {
+        fontSize: 12,
+        fontWeight: '600',
+        color: Colors.textSecondary,
+        width: 35,
+        textAlign: 'right',
     },
     emptyCard: {
         alignItems: 'center',
-        padding: 32,
+        padding: Layout.spacing.xl,
+        borderStyle: 'dashed',
     },
     emptyText: {
-        marginTop: 16,
+        marginTop: Layout.spacing.m,
+        fontSize: 16,
+        color: Colors.textSecondary,
+        marginBottom: Layout.spacing.m,
+    },
+    startLearningBtn: {
+        paddingVertical: 8,
+        paddingHorizontal: 16,
+        backgroundColor: Colors.primary,
+        borderRadius: Layout.borderRadius.m,
+    },
+    startLearningText: {
+        color: '#FFF',
+        fontWeight: 'bold',
     },
 });
