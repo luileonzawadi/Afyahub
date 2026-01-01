@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, LayoutAnimation } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
 import { Colors } from '../constants/Colors';
+import { Layout } from '../constants/Layout';
 
 interface InputProps {
   label?: string;
@@ -20,6 +21,7 @@ interface InputProps {
 
 export const Input = ({ label, type = 'text', value, onChangeText, placeholder, error, required, editable = true, keyboardType, multiline, numberOfLines }: InputProps) => {
   const [showPassword, setShowPassword] = useState(false);
+  const [isFocused, setIsFocused] = useState(false);
   const isPassword = type === 'password';
 
   return (
@@ -29,18 +31,25 @@ export const Input = ({ label, type = 'text', value, onChangeText, placeholder, 
           {label} {required && <Text style={styles.required}>*</Text>}
         </Text>
       )}
-      <View style={[styles.inputContainer, error && styles.inputError]}>
+      <View style={[
+        styles.inputContainer,
+        isFocused && styles.inputFocused,
+        error && styles.inputError
+      ]}>
         <TextInput
-          style={[styles.input, multiline && { height: (numberOfLines || 1) * 40 }]}
+          style={[styles.input, multiline && { height: (numberOfLines || 3) * 24 }]}
           value={value}
           onChangeText={onChangeText}
           placeholder={placeholder}
+          placeholderTextColor={Colors.textSecondary}
           secureTextEntry={isPassword && !showPassword}
           keyboardType={keyboardType || (type === 'email' ? 'email-address' : 'default')}
           autoCapitalize={type === 'email' ? 'none' : 'sentences'}
           multiline={multiline}
           numberOfLines={numberOfLines}
           editable={editable}
+          onFocus={() => setIsFocused(true)}
+          onBlur={() => setIsFocused(false)}
         />
         {isPassword && (
           <TouchableOpacity
@@ -58,41 +67,50 @@ export const Input = ({ label, type = 'text', value, onChangeText, placeholder, 
 
 const styles = StyleSheet.create({
   container: {
-    marginBottom: 16,
+    marginBottom: Layout.spacing.m,
   },
   label: {
-    fontSize: 16,
-    fontWeight: 'bold',
+    fontSize: 14,
+    fontWeight: '600',
     color: Colors.text,
-    marginBottom: 8,
+    marginBottom: Layout.spacing.xs,
+    marginLeft: 2,
   },
   required: {
-    color: 'red',
+    color: Colors.error,
   },
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    borderWidth: 1,
+    borderWidth: 1.5,
     borderColor: Colors.border,
-    borderRadius: 8,
+    borderRadius: Layout.borderRadius.l,
     backgroundColor: Colors.surface,
+    overflow: 'hidden',
+    minHeight: 50,
   },
   input: {
     flex: 1,
-    padding: 12,
+    padding: Layout.spacing.m,
     fontSize: 16,
     color: Colors.text,
   },
+  inputFocused: {
+    borderColor: Colors.primary,
+    backgroundColor: Colors.primaryLight,
+  },
   inputError: {
-    borderColor: 'red',
+    borderColor: Colors.error,
+    backgroundColor: '#FFF5F5',
   },
   icon: {
-    padding: 12,
+    padding: Layout.spacing.m,
   },
   errorText: {
-    color: 'red',
-    fontSize: 14,
+    color: Colors.error,
+    fontSize: 12,
     marginTop: 4,
+    marginLeft: 4,
   },
 });
 

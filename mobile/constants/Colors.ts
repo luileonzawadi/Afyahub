@@ -1,13 +1,17 @@
 export const Colors = {
-    primary: '#4A90E2', // Calming blue
-    secondary: '#7B68EE', // Medium slate blue
-    background: '#F8F9FA', // Very light gray-blue
-    surface: '#FFFFFF', // Clean white for cards
-    text: '#2C3E50', // Dark blue-gray
-    textSecondary: '#5A6C7D', // Muted blue-gray
-    border: '#E1E8ED', // Soft gray border
-    error: '#E74C3C', // Soft red
-    success: '#27AE60', // Calming green
-    headerBg: '#FFE5E5', // Soft pink for header
-    footerBg: '#E5F5E5', // Soft green for footer
+    primary: '#0056D2', // Deep Vibrant Blue - Trust, Professionalism
+    primaryLight: '#E3F2FD', // Very light blue for backgrounds/highlights
+    secondary: '#20B2AA', // Soft Teal - Accents, calming
+    background: '#F5F7FA', // Off-white/slate - Reduces eye strain
+    surface: '#FFFFFF', // Pure White - Cards, Modals
+    text: '#1A202C', // Dark Slate - Main text
+    textSecondary: '#718096', // Cool Gray - Secondary text
+    border: '#E2E8F0', // Light Gray - Borders
+    error: '#E53E3E', // Red - Errors
+    success: '#38A169', // Green - Success
+    warning: '#DD6B20', // Orange - Warnings
+    info: '#3182CE', // Blue - Information
+    headerBg: '#FFFFFF', // White header for clean look
+    tabBarActive: '#0056D2',
+    tabBarInactive: '#A0AEC0',
 };
