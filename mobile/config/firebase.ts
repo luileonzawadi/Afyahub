@@ -3,12 +3,12 @@ import { getAuth } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
 
 const firebaseConfig = {
-  apiKey: "your-api-key",
-  authDomain: "your-project.firebaseapp.com",
-  projectId: "your-project-id",
-  storageBucket: "your-project.appspot.com",
+  apiKey: "AIzaSyDiCQd9PEwQjDR2ZyKzDEXYLnlE-pLLbH0",
+  authDomain: "afyahub-7b00f.firebaseapp.com",
+  projectId: "afyahub-7b00f",
+  storageBucket: "afyahub-7b00f.firebasestorage.app",
   messagingSenderId: "123456789",
-  appId: "your-app-id"
+  appId: "1:79254357820:android:2ebb0412e8e34a9df8c039"
 };
 
 const app = initializeApp(firebaseConfig);

@@ -7,12 +7,17 @@ import { Card } from '../../components/Card';
 import { useRouter } from 'expo-router';
 import { Colors } from '../../constants/Colors';
 import { Layout } from '../../constants/Layout';
+import { db } from '../../config/firebase';
 
 export default function Dashboard() {
     const { user } = useAuth();
     const [progress, setProgress] = useState<any>(null);
     const [refreshing, setRefreshing] = useState(false);
     const router = useRouter();
+
+    useEffect(() => {
+        console.log('Firebase DB initialized:', !!db);
+    }, []);
 
     const fetchData = async () => {
         // Simulations of API call
