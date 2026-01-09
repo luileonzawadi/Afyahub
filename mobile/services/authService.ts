@@ -1,11 +1,19 @@
 import { 
   signInWithEmailAndPassword, 
   createUserWithEmailAndPassword, 
-  signOut, 
-  User as FirebaseUser 
+  signOut,
+  getAuth,
+  initializeAuth,
+  getReactNativePersistence
 } from 'firebase/auth';
 import { doc, setDoc, getDoc } from 'firebase/firestore';
-import { auth, db } from '../config/firebase';
+import { db } from '../config/firebase';
+import app from '../config/firebase';
+import ReactNativeAsyncStorage from '@react-native-async-storage/async-storage';
+
+const auth = initializeAuth(app, {
+  persistence: getReactNativePersistence(ReactNativeAsyncStorage)
+});
 
 export interface User {
   id: string;
@@ -49,3 +57,5 @@ export const authService = {
     return userDoc.exists() ? userDoc.data() as User : null;
   }
 };
+
+export { auth };

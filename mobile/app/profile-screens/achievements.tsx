@@ -5,7 +5,17 @@ import { FontAwesome } from '@expo/vector-icons';
 import { useAuth } from '../../context/AuthContext';
 import { Colors } from '../../constants/Colors';
 import { Card } from '../../components/Card';
-import { databaseService, Achievement } from '../../services/databaseService';
+
+interface Achievement {
+    id: string;
+    title: string;
+    description: string;
+    icon: string;
+    unlocked: boolean;
+    unlockedDate?: Date;
+    progress?: number;
+    maxProgress?: number;
+}
 
 export default function Achievements() {
     const router = useRouter();
@@ -15,16 +25,32 @@ export default function Achievements() {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        if (user) {
-            loadAchievements();
-        }
-    }, [user]);
+        loadAchievements();
+    }, []);
 
     const loadAchievements = async () => {
         try {
             setLoading(true);
-            const userAchievements = await databaseService.getUserAchievements(user!.id);
-            setAchievements(userAchievements);
+            const mockAchievements: Achievement[] = [
+                {
+                    id: 'first_course',
+                    title: 'First Steps',
+                    description: 'Complete your first course module',
+                    icon: 'graduation-cap',
+                    unlocked: true,
+                    unlockedDate: new Date('2024-01-10'),
+                },
+                {
+                    id: 'course_master',
+                    title: 'Course Master',
+                    description: 'Complete 5 courses',
+                    icon: 'trophy',
+                    unlocked: false,
+                    progress: 2,
+                    maxProgress: 5,
+                }
+            ];
+            setAchievements(mockAchievements);
         } catch (error) {
             console.error('Failed to load achievements:', error);
         } finally {

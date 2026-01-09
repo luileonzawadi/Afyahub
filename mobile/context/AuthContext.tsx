@@ -1,9 +1,15 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import * as SecureStore from 'expo-secure-store';
 import { useRouter, useSegments } from 'expo-router';
-import { onAuthStateChanged } from 'firebase/auth';
-import { auth } from '../config/firebase';
-import { authService, User } from '../services/authService';
+
+interface User {
+    id: string;
+    email: string;
+    name: string;
+    role: string;
+    phone?: string;
+    bio?: string;
+    createdAt: Date;
+}
 
 interface AuthContextType {
     user: User | null;
@@ -26,42 +32,38 @@ export function useAuth() {
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
     const [user, setUser] = useState<User | null>(null);
-    const [isLoading, setIsLoading] = useState(true);
+    const [isLoading, setIsLoading] = useState(false);
     const router = useRouter();
 
-    useEffect(() => {
-        const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
-            if (firebaseUser) {
-                const userData = await authService.getCurrentUser();
-                setUser(userData);
-            } else {
-                setUser(null);
-            }
-            setIsLoading(false);
-        });
-
-        return unsubscribe;
-    }, []);
-
     const login = async (email: string, password: string) => {
-        const userData = await authService.login(email, password);
-        setUser(userData);
+        const mockUser: User = {
+            id: '1',
+            email,
+            name: 'Test User',
+            role: 'learner',
+            createdAt: new Date()
+        };
+        setUser(mockUser);
     };
 
     const register = async (email: string, password: string, name: string) => {
-        const userData = await authService.register(email, password, name);
-        setUser(userData);
+        const mockUser: User = {
+            id: '1',
+            email,
+            name,
+            role: 'learner',
+            createdAt: new Date()
+        };
+        setUser(mockUser);
     };
 
     const logout = async () => {
-        await authService.logout();
         setUser(null);
     };
 
     const updateUser = async (userData: Partial<User>) => {
         if (user) {
-            const updatedUser = { ...user, ...userData };
-            setUser(updatedUser);
+            setUser({ ...user, ...userData });
         }
     };
 
